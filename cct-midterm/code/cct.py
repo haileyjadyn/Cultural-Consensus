@@ -55,6 +55,14 @@ if __name__ == "__main__":
     print("\nPosterior Summary:")
     print(summary)
 
+    # Plot trace for all parameters to assess convergence
+    print("\nPlotting MCMC traces to assess convergence...")
+    trace_plot = az.plot_trace(trace, var_names=["D", "Z"])
+    
+    # Save the trace plot
+    from matplotlib import pyplot as plt
+    plt.figure(figsize=(12, 8))
+
     # Competence Estimates
     D_means = trace.posterior["D"].mean(dim=("chain", "draw")).values.flatten()
     print("\nPosterior Mean Competence per Informant:")
@@ -66,7 +74,11 @@ if __name__ == "__main__":
     print(f"\nMost competent: P{most+1} ({D_means[most]:.3f})")
     print(f"Least competent: P{least+1} ({D_means[least]:.3f})")
 
-    az.plot_posterior(trace, var_names=["D"])
+    # Visualization of competence distributions
+    plt.figure(figsize=(10, 6))
+    competence_plot = az.plot_posterior(trace, var_names=["D"])
+    plt.title("Posterior Distributions of Informant Competence")
+    plt.xlabel("Competence Level")
 
     # Consensus Answer Estimates
     Z_means = trace.posterior["Z"].mean(dim=("chain", "draw")).values.flatten()
@@ -74,7 +86,11 @@ if __name__ == "__main__":
     print("\nConsensus Answer Key (CCT):")
     print(Z_map)
 
-    az.plot_posterior(trace, var_names=["Z"])
+    # Visualization of consensus answers
+    plt.figure(figsize=(12, 8))
+    consensus_plot = az.plot_posterior(trace, var_names=["Z"])
+    plt.title("Posterior Distributions of Consensus Answers")
+    plt.xlabel("Probability of Answer = 1")
 
     # Compare with Majority Vote
     majority_vote = (X.mean(axis=0) > 0.5).astype(int)
