@@ -11,7 +11,7 @@ def load_data(filepath="../data/plant_knowledge.csv"):
     number of informants (N), and number of questions (M), excludes 'Informant' column.
     """
     df = pd.read_csv(filepath)
-    X = df.iloc[:, 1:].values 
+    X = df.iloc[:, 1:].values # excludes 'Informant' column
     N, M = X.shape
     return X, N, M
 
@@ -66,11 +66,15 @@ if __name__ == "__main__":
     print(f"\nMost competent: P{most+1} ({D_means[most]:.3f})")
     print(f"Least competent: P{least+1} ({D_means[least]:.3f})")
 
+    az.plot_posterior(trace, var_names=["D"])
+
     # Consensus Answer Estimates
     Z_means = trace.posterior["Z"].mean(dim=("chain", "draw")).values.flatten()
     Z_map = (Z_means > 0.5).astype(int)
     print("\nConsensus Answer Key (CCT):")
     print(Z_map)
+
+    az.plot_posterior(trace, var_names=["Z"])
 
     # Compare with Majority Vote
     majority_vote = (X.mean(axis=0) > 0.5).astype(int)
