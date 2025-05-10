@@ -40,7 +40,7 @@ if __name__ == "__main__":
     X, N, M = load_data() # load data
     model = build_cultural_consensus_model(X, N, M) # build model
 
-    # perform inference 
+    # Perform inference 
     with model:
         trace = pm.sample(
             draws=1000,
@@ -50,7 +50,7 @@ if __name__ == "__main__":
             return_inferencedata=True
         )
 
-    # analyze results 
+    # Analyze results 
     summary = az.summary(trace, var_names=["D", "Z"])
     print("\nPosterior Summary:")
     print(summary)
